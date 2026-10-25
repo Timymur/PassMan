@@ -20,10 +20,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.passman.ui.screens.LoginScreen
 import com.example.passman.ui.screens.RegisterScreen
 import com.example.passman.ui.theme.PassManTheme
+import com.example.passman.util.PrefsHelper
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +43,14 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppContent(){
-    var masterPassword by remember {mutableStateOf<String?>(null)}
+    val context  = LocalContext.current
+    var masterPassword by remember {mutableStateOf<String?>(PrefsHelper.getMasterPassword(context))}
     var isLoggedIn by remember {mutableStateOf(false)}
 
     when{
         masterPassword == null ->{
             RegisterScreen(onRegister = {password ->
+                PrefsHelper.saveMasterPassword(context, password)
                 masterPassword = password
                 isLoggedIn = true
             })
